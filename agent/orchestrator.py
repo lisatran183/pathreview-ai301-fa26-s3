@@ -40,14 +40,15 @@ class Orchestrator:
             Dict with analysis results from all tools
         """
         logger.info("orchestrator_start", profile_id=profile_id)
+        self.context_manager.clear()
 
         # Build execution plan
         plan = self._build_plan(profile_data)
 
-        # Load previous session state if available
-        session_state = {}
+        # Start each run from empty state, discarding any earlier session
+        session_state: dict = {}
         if self.session_store:
-            session_state = self.session_store.get(profile_id) or {}
+            self.session_store.delete(profile_id)
 
         # Execute plan
         results = {}
