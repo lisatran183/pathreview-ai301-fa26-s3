@@ -2,6 +2,8 @@
 
 from typing import TYPE_CHECKING, cast
 
+import pytest
+
 from agent.memory.session_store import SessionStore
 from agent.orchestrator import Orchestrator
 
@@ -51,6 +53,7 @@ def _make_orchestrator() -> tuple[Orchestrator, dict[str, CountingTool], FakeRed
     return orch, tools, fake_redis
 
 
+@pytest.mark.unit
 def test_second_run_with_same_input_calls_tool_again() -> None:
     """A second run must not reuse the first run's cached tool result."""
     orch, tools, _ = _make_orchestrator()
@@ -64,6 +67,7 @@ def test_second_run_with_same_input_calls_tool_again() -> None:
     assert second["tool_results"]["readme_scorer"]["call_number"] == 2
 
 
+@pytest.mark.unit
 def test_saved_session_drops_tools_not_used_in_latest_run() -> None:
     """Session state saved by an earlier run must not survive into the next one."""
     orch, _, fake_redis = _make_orchestrator()
